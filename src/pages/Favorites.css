@@ -1,0 +1,82 @@
+.favorites-page {
+  width: 95%;
+  max-width: 1300px;
+  margin: 40px auto;
+}
+
+.favorites-page h2 {
+  text-align: center;
+  font-size: 42px;
+  margin-bottom: 40px;
+}
+
+.favorites-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+.favorite-card {
+  width: 320px;
+
+  background: white;
+
+  border-radius: 15px;
+
+  overflow: hidden;
+
+  box-shadow: 0 4px 20px rgba(
+    0,
+    0,
+    0,
+    0.1
+  );
+
+  transition: 0.3s;
+}
+
+.favorite-card:hover {
+  transform: translateY(-5px);
+}
+
+.favorite-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.favorite-card h3 {
+  padding: 15px;
+  color: #2563eb;
+}
+
+.favorite-card p {
+  padding: 0 15px;
+  margin-bottom: 10px;
+}
+
+.favorite-card button {
+  width: calc(100% - 30px);
+
+  margin: 15px;
+
+  padding: 12px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #2563eb;
+
+  color: white;
+
+  cursor: pointer;
+}
+
+.empty-favorites {
+  text-align: center;
+  font-size: 22px;
+  color: gray;
+  margin-top: 100px;
+}

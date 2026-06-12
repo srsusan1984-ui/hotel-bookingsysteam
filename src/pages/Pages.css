@@ -1,0 +1,144 @@
+.page {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+  min-height: 70vh;
+}
+
+.page h1 {
+  font-size: 32px;
+  color: #1f2937;
+  margin-bottom: 30px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.hotel-card,
+.booking-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.hotel-card:hover,
+.booking-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.hotel-card h3,
+.booking-card h3 {
+  font-size: 22px;
+  color: #2563eb;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.hotel-card p,
+.booking-card p {
+  color: #6b7280;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.booking-card {
+  border-left: 4px solid #2563eb;
+}
+
+.booking-card p:first-of-type {
+  margin-top: 16px;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 8px;
+}
+
+.status-confirmed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-cancelled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-state h2 {
+  font-size: 24px;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  color: #9ca3af;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.empty-state a {
+  display: inline-block;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.empty-state a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page {
+    margin: 20px auto;
+  }
+
+  .page h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .hotel-card,
+  .booking-card {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .hotel-card h3,
+  .booking-card h3 {
+    font-size: 18px;
+  }
+
+  .hotel-card p,
+  .booking-card p {
+    font-size: 14px;
+  }
+}
