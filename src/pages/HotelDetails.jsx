@@ -10,293 +10,315 @@ import {
 } from "react-router-dom";
 
 import axios from "axios";
-
+import { motion } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { FaMapMarkerAlt, FaPhone, FaUsers, FaDoorOpen, FaWifi, FaParking, FaUtensils, FaSwimmingPool, FaCalendar } from "react-icons/fa";
+import { showErrorToast, showSuccessToast } from "../assets/utilities/toastUtils";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 import "./HotelDetails.css";
 
 const HotelDetails = () => {
-  const { id } =
-    useParams();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const pageLocation = useLocation();
+  const searchData = pageLocation.state?.hotel || {};
 
-  const navigate =
-    useNavigate();
-
-  const pageLocation =
-    useLocation();
-
-  const searchData =
-    pageLocation.state || {};
-
-  const [hotel, setHotel] =
-    useState(null);
-
-  const [dateRange, setDateRange] =
-    useState([
-      searchData.startDate
-        ? new Date(
-            searchData.startDate
-          )
-        : null,
-
-      searchData.endDate
-        ? new Date(
-            searchData.endDate
-          )
-        : null,
-    ]);
-
-  const [startDate, endDate] =
-    dateRange;
-
-  const [adults, setAdults] =
-    useState(
-      searchData.adults || 1
-    );
-
-  const [children, setChildren] =
-    useState(
-      searchData.children || 0
-    );
+  const [hotel, setHotel] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [startDate, endDate] = dateRange;
+  const [adults, setAdults] = useState(searchData.adults || 1);
+  const [children, setChildren] = useState(searchData.children || 0);
 
   useEffect(() => {
-    const fetchHotel =
-      async () => {
-        try {
-          const response =
-            await axios.get(
-              `http://localhost:5000/api/hotels/${id}`
-            );
-
-          setHotel(
-            response.data
-          );
-        } catch (error) {
-          console.log(error);
-        }
-      };
+    const fetchHotel = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `http://localhost:5000/api/hotels/${id}`
+        );
+        setHotel(response.data);
+      } catch (error) {
+        console.log(error);
+        showErrorToast("Failed to load hotel details");
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchHotel();
   }, [id]);
 
-  const totalGuests =
-    adults + children;
+  const totalGuests = adults + children;
+  const rooms = Math.max(1, Math.ceil(totalGuests / 2));
+  
+  // Calculate available rooms based on dates
+  const calculateAvailableRooms = () => {
+    if (!hotel) return hotel?.totalRooms || 0;
+    // For now, show available rooms minus required rooms as a simple calculation
+    const availableRooms = Math.max(0, hotel.totalRooms - rooms);
+    return availableRooms;
+  };
+  
+  const availableRooms = calculateAvailableRooms();
 
-  const rooms =
-    Math.max(
-      1,
-      Math.ceil(
-        totalGuests / 2
-      )
+  const handleBooking = () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      showErrorToast("Please login first");
+      navigate("/Login");
+      return;
+    }
+
+    if (!startDate || !endDate) {
+      showErrorToast("Please select check-in and check-out dates");
+      return;
+    }
+
+    if (totalGuests === 0) {
+      showErrorToast("Please select at least one guest");
+      return;
+    }
+
+    navigate(
+      "/booking-details",
+      {
+        state: {
+          hotel,
+          startDate,
+          endDate,
+          adults,
+          children,
+          rooms,
+        },
+      }
     );
+  };
 
-  const handleBooking =
-    () => {
-      const user =
-        JSON.parse(
-          localStorage.getItem(
-            "user"
-          )
-        );
-
-      if (!user) {
-        alert(
-          "Please Login First"
-        );
-
-        navigate(
-          "/Login"
-        );
-
-        return;
-      }
-
-      if (
-        !startDate ||
-        !endDate
-      ) {
-        alert(
-          "Please select dates first"
-        );
-
-        return;
-      }
-
-      navigate(
-        "/booking-details",
-        {
-          state: {
-            hotel,
-            startDate,
-            endDate,
-            adults,
-            children,
-            rooms,
-          },
-        }
-      );
-    };
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   if (!hotel) {
     return (
-      <h2>
-        Loading...
-      </h2>
+      <div className="page">
+        <h2>Hotel not found</h2>
+      </div>
     );
   }
 
   return (
-    <div className="hotel-details">
-
-      <img
-        src={hotel.image}
-        alt={hotel.hotelName}
-        className="hotel-image"
-      />
-
-      <h1>
-        {hotel.hotelName}
-      </h1>
-
-      <h3>
-        📍 {hotel.city},
-        {" "}
-        {hotel.state}
-      </h3>
-
-      <p>
-        📍 Address:
-        {" "}
-        {hotel.address}
-      </p>
-
-      <p>
-        📞 Phone:
-        {" "}
-        {hotel.phone}
-      </p>
-
-      <p>
-        💰 ₹
-        {hotel.price}
-        /night
-      </p>
-
-      <p>
-        🏨 Total Rooms:
-        {" "}
-        {
-          hotel.totalRooms
-        }
-      </p>
-      <p>
-  ✅ Available Rooms:
-  {" "}
-  {
-    hotel.availableRooms
-  }
-</p> 
-
-      <p>
-        {hotel.description}
-      </p>
-
-      <div className="availability-box">
-
-        <h2>
-          Availability
-        </h2>
-
-        <DatePicker
-          selectsRange
-          startDate={
-            startDate
-          }
-          endDate={
-            endDate
-          }
-          onChange={(
-            update
-          ) =>
-            setDateRange(
-              update
-            )
-          }
-          placeholderText="Check-In - Check-Out"
-          className="availability-input"
+    <div className="hotel-details-container">
+      {/* Hero Image */}
+      <motion.div
+        className="hotel-details-hero"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <img
+          src={hotel.image}
+          alt={hotel.hotelName}
+          className="hotel-details-image"
         />
-
-        <div className="guest-controls">
-
-          <div>
-            <label>
-              Adults
-            </label>
-
-            <input
-              type="number"
-              min="1"
-              value={
-                adults
-              }
-              onChange={(
-                e
-              ) =>
-                setAdults(
-                  Number(
-                    e
-                      .target
-                      .value
-                  )
-                )
-              }
-            />
+        <div className="hero-overlay" />
+        <motion.div
+          className="hero-content"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <h1>{hotel.hotelName}</h1>
+          <div className="hero-rating">
+            <span>⭐ 4.5/5</span>
+            <span>•</span>
+            <span>{availableRooms} Rooms Available</span>
           </div>
+        </motion.div>
+      </motion.div>
 
-          <div>
-            <label>
-              Children
-            </label>
+      <div className="hotel-details-content">
+        <div className="hotel-details-main">
+          {/* Hotel Information */}
+          <motion.div
+            className="info-section"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+          >
+            <h2>About This Hotel</h2>
+            
+            <div className="info-grid">
+              <div className="info-card">
+                <FaMapMarkerAlt className="info-icon" />
+                <div>
+                  <p className="info-label">Location</p>
+                  <p className="info-value">{hotel.city}, {hotel.state}</p>
+                  <p className="info-detail">{hotel.address}</p>
+                </div>
+              </div>
 
-            <input
-              type="number"
-              min="0"
-              value={
-                children
-              }
-              onChange={(
-                e
-              ) =>
-                setChildren(
-                  Number(
-                    e
-                      .target
-                      .value
-                  )
-                )
-              }
-            />
-          </div>
+              <div className="info-card">
+                <FaPhone className="info-icon" />
+                <div>
+                  <p className="info-label">Contact</p>
+                  <p className="info-value">{hotel.phone}</p>
+                </div>
+              </div>
 
+              <div className="info-card">
+                <FaDoorOpen className="info-icon" />
+                <div>
+                  <p className="info-label">Available Rooms</p>
+                  <p className="info-value">{hotel.availableRooms}/{hotel.totalRooms}</p>
+                </div>
+              </div>
+
+              <div className="info-card">
+                <span className="info-icon">₹</span>
+                <div>
+                  <p className="info-label">Price Per Night</p>
+                  <p className="info-value">₹{hotel.price}</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Description */}
+          <motion.div
+            className="description-section"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            viewport={{ once: true }}
+          >
+            <h3>Description</h3>
+            <p>{hotel.description}</p>
+          </motion.div>
+
+          {/* Amenities */}
+          <motion.div
+            className="amenities-section"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <h3>Amenities</h3>
+            <div className="amenities-grid">
+              <div className="amenity">
+                <FaWifi className="amenity-icon" />
+                <span>Free WiFi</span>
+              </div>
+              <div className="amenity">
+                <FaParking className="amenity-icon" />
+                <span>Parking</span>
+              </div>
+              <div className="amenity">
+                <FaUtensils className="amenity-icon" />
+                <span>Restaurant</span>
+              </div>
+              <div className="amenity">
+                <FaSwimmingPool className="amenity-icon" />
+                <span>Swimming Pool</span>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
-        <h3>
-          Rooms Required:
-          {" "}
-          {rooms}
-        </h3>
-
-        <button
-          onClick={
-            handleBooking
-          }
+        {/* Sticky Booking Card */}
+        <motion.div
+          className="booking-summary-card"
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
         >
-          Continue Booking
-        </button>
+          <h3>Book Your Stay</h3>
 
+          <div className="booking-form">
+            <div className="form-group">
+              <label>Check-In & Check-Out</label>
+              <div className="date-picker-wrapper">
+                <FaCalendar className="date-icon" />
+                <DatePicker
+                  selectsRange
+                  startDate={startDate}
+                  endDate={endDate}
+                  onChange={(update) => setDateRange(update)}
+                  placeholderText="Select dates"
+                  className="form-input"
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Adults</label>
+                <select
+                  value={adults}
+                  onChange={(e) => setAdults(Number(e.target.value))}
+                  className="form-input"
+                >
+                  {[1, 2, 3, 4, 5, 6].map(num => (
+                    <option key={num} value={num}>{num}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Children</label>
+                <select
+                  value={children}
+                  onChange={(e) => setChildren(Number(e.target.value))}
+                  className="form-input"
+                >
+                  {[0, 1, 2, 3, 4, 5].map(num => (
+                    <option key={num} value={num}>{num}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="booking-info">
+              <div className="info-row">
+                <span>Total Guests:</span>
+                <strong>{totalGuests}</strong>
+              </div>
+              <div className="info-row">
+                <span>Rooms Required:</span>
+                <strong>{rooms}</strong>
+              </div>
+              {startDate && endDate && (
+                <div className="info-row">
+                  <span>Nights:</span>
+                  <strong>
+                    {Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24))}
+                  </strong>
+                </div>
+              )}
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn btn-primary btn-lg"
+              style={{ width: '100%' }}
+              onClick={handleBooking}
+            >
+              Continue Booking
+            </motion.button>
+
+            <p className="booking-note">
+              No payment required yet. Secure your booking now!
+            </p>
+          </div>
+        </motion.div>
       </div>
-
     </div>
   );
 };

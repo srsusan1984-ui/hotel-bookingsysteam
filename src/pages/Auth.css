@@ -1,186 +1,400 @@
+/* ========== AUTH CONTAINER ========== */
 .auth-container {
-  min-height: 90vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(
-    135deg,
-    #f3f4f6 0%,
-    #e5e7eb 100%
-  );
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
 }
 
+/* ========== AUTH CARD ========== */
 .auth-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 450px;
   background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px
-    rgba(0, 0, 0, 0.1);
-  animation: slideUp 0.4s ease;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-.auth-card h2 {
-  font-size: 28px;
-  color: #1f2937;
-  margin-bottom: 20px;
-  font-weight: 700;
-}
-
+/* ========== AUTH TABS ========== */
 .auth-tabs {
   display: flex;
-  gap: 10px;
-  margin-bottom: 25px;
+  gap: 0;
+  background: #f8fafc;
   border-bottom: 2px solid #e5e7eb;
+  width: 100%;
 }
 
-.auth-tabs button {
+.tab-btn {
   flex: 1;
-  padding: 12px;
+  padding: 16px;
   border: none;
   cursor: pointer;
   background: transparent;
   color: #6b7280;
   font-size: 15px;
   font-weight: 600;
+  transition: all 0.3s ease;
   border-bottom: 3px solid transparent;
+  position: relative;
+  white-space: nowrap;
 }
 
-.auth-tabs button:hover {
+.tab-btn:hover {
+  color: #2563eb;
+  background: #f3f4f6;
+}
+
+.tab-btn.active {
+  color: white;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  border-bottom-color: transparent;
+}
+
+/* ========== AUTH FORM ========== */
+.auth-form {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.auth-form h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.form-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 8px 0;
+}
+
+/* ========== FORM GROUP ========== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-label svg {
   color: #2563eb;
 }
 
-.active {
-  color: #2563eb !important;
-  border-bottom-color: #2563eb !important;
-}
-
-.auth-card form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.auth-card input {
-  width: 100%;
+/* ========== FORM INPUT ========== */
+.form-input {
   padding: 12px 16px;
   border: 2px solid #e5e7eb;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   background: #f9fafb;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  width: 100%;
   box-sizing: border-box;
 }
 
-.auth-card input:focus {
+.form-input:focus {
   outline: none;
   border-color: #2563eb;
   background: white;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.auth-card input::placeholder {
+.form-input::placeholder {
   color: #9ca3af;
 }
 
-/* Error */
-
-.error-input {
-  border: 2px solid #ef4444 !important;
-  background: #fef2f2 !important;
+.form-input.error {
+  border-color: #ef4444;
+  background: #fef2f2;
 }
 
-.error-message {
-  color: #ef4444;
-  font-size: 13px;
-  font-weight: 500;
-  margin-top: -6px;
-  margin-bottom: 4px;
+.form-input.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
-/* Success */
-
-.success-message {
-  color: #16a34a;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-/* Password */
-
-.password-wrapper {
+/* ========== PASSWORD GROUP ========== */
+.password-group {
   position: relative;
+  display: flex;
+  align-items: center;
   width: 100%;
 }
 
-.password-wrapper input {
-  padding-right: 70px;
+.password-group .form-input {
+  padding-right: 44px;
 }
 
-.show-password-btn {
+.toggle-password {
   position: absolute;
   right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-
+  background: none;
   border: none;
-  background: transparent;
-
   cursor: pointer;
+  color: #6b7280;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
 
+.toggle-password:hover {
   color: #2563eb;
-  font-size: 13px;
+}
+
+/* ========== ERROR TEXT ========== */
+.error-text {
+  font-size: 12px;
+  color: #ef4444;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ========== FORM FOOTER ========== */
+.form-footer {
+  font-size: 14px;
+  color: #6b7280;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
   font-weight: 600;
+  font-size: inherit;
+  padding: 0;
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-.show-password-btn:hover {
-  color: #1d4ed8;
+.link-btn:hover {
+  color: #1e40af;
+  text-decoration: underline;
 }
 
-/* Submit */
+/* ========== BUTTONS ========== */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.btn-lg {
+  padding: 14px 24px;
+  font-size: 15px;
+  height: 50px;
+  width: 100%;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
 
 .submit-btn {
-  margin-top: 10px;
-  height: 48px;
-
-  border: none;
-  border-radius: 6px;
-
-  cursor: pointer;
-
-  background: linear-gradient(
-    135deg,
-    #2563eb 0%,
-    #1e40af 100%
-  );
-
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   color: white;
-
   font-size: 15px;
   font-weight: 700;
-
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px
-    rgba(37, 99, 235, 0.35);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
 }
 
 .submit-btn:active {
   transform: translateY(0);
 }
 
+/* ========== ANIMATIONS ========== */
 @keyframes slideUp {
   from {
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .auth-container {
+    padding: 16px;
+  }
+
+  .auth-card {
+    max-width: 100%;
+    border-radius: 14px;
+  }
+
+  .auth-form {
+    padding: 28px;
+    gap: 18px;
+  }
+
+  .auth-form h2 {
+    font-size: 24px;
+  }
+
+  .form-subtitle {
+    font-size: 13px;
+  }
+
+  .form-group {
+    gap: 6px;
+  }
+
+  .form-label {
+    font-size: 11px;
+  }
+
+  .form-input {
+    padding: 11px 14px;
+    font-size: 14px;
+  }
+
+  .tab-btn {
+    padding: 14px;
+    font-size: 13px;
+  }
+
+  .btn,
+  .btn-lg,
+  .submit-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 12px;
+  }
+
+  .auth-card {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .auth-tabs {
+    gap: 0;
+  }
+
+  .tab-btn {
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .auth-form {
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .auth-form h2 {
+    font-size: 20px;
+  }
+
+  .form-subtitle {
+    font-size: 12px;
+  }
+
+  .form-group {
+    gap: 6px;
+  }
+
+  .form-label {
+    font-size: 10px;
+  }
+
+  .form-input {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .password-group .form-input {
+    padding-right: 40px;
+  }
+
+  .toggle-password {
+    width: 28px;
+    height: 28px;
+    right: 8px;
+  }
+
+  .error-text {
+    font-size: 11px;
+  }
+
+  .form-footer {
+    font-size: 13px;
+  }
+
+  .btn,
+  .btn-lg,
+  .submit-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+    height: 44px;
   }
 }

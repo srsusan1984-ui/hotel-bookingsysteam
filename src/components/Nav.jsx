@@ -1,150 +1,167 @@
-import React from "react";
+import React, { useState } from "react";
 import "../App.css";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
-  Link,
-  useNavigate,
-} from "react-router-dom";
+  FaHome,
+  FaCalendar,
+  FaHeart,
+  FaSignOutAlt,
+  FaTachometerAlt,
+  FaBook,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
 
 const Nav = () => {
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const token =
-    localStorage.getItem(
-      "token"
-    );
+  const token = localStorage.getItem("token");
+  const agentToken = localStorage.getItem("agentToken");
 
-  const agentToken =
-    localStorage.getItem(
-      "agentToken"
-    );
+  const user = JSON.parse(localStorage.getItem("user"));
+  const agent = JSON.parse(localStorage.getItem("agent"));
 
-  const user = JSON.parse(
-    localStorage.getItem(
-      "user"
-    )
-  );
-
-  const agent = JSON.parse(
-    localStorage.getItem(
-      "agent"
-    )
-  );
-
-  const username =
-    user?.name || "";
-
-  const hotelName =
-    agent?.hotelName || "";
+  const username = user?.name || "";
+  const hotelName = agent?.hotelName || "";
 
   const handleLogout = () => {
-    localStorage.removeItem(
-      "token"
-    );
-
-    localStorage.removeItem(
-      "user"
-    );
-
-    localStorage.removeItem(
-      "agentToken"
-    );
-
-    localStorage.removeItem(
-      "agent"
-    );
-
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("agentToken");
+    localStorage.removeItem("agent");
     navigate("/");
+    setIsMobileMenuOpen(false);
+  };
+
+  const isActive = (path) => location.pathname === path;
+
+  const linkVariants = {
+    hover: { y: -2, transition: { duration: 0.2 } },
   };
 
   return (
-    <div className="nav">
-
-      <div className="left-nav">
-
+    <nav className="nav">
+      <motion.div className="left-nav">
         {token ? (
           <>
-            <Link to="/">
-              Home
+            <Link
+              to="/"
+              className={isActive("/") ? "active" : ""}
+              onClick={() => setIsMobileMenuOpen(false)}
+              title="Home"
+            >
+              <FaHome size={18} />
+              <span>Home</span>
             </Link>
 
-            <Link to="/MyBookings">
-              My Bookings
+            <Link
+              to="/MyBookings"
+              className={isActive("/MyBookings") ? "active" : ""}
+              onClick={() => setIsMobileMenuOpen(false)}
+              title="My Bookings"
+            >
+              <FaCalendar size={18} />
+              <span>Bookings</span>
             </Link>
 
-            <Link to="/favorites">
-              Favorites
+            <Link
+              to="/favorites"
+              className={isActive("/favorites") ? "active" : ""}
+              onClick={() => setIsMobileMenuOpen(false)}
+              title="Favorites"
+            >
+              <FaHeart size={18} />
+              <span>Favorites</span>
             </Link>
           </>
         ) : agentToken ? (
           <>
-            <Link to="/agent-dashboard">
-              Dashboard
+            <Link
+              to="/Agent-Dashboard"
+              className={isActive("/Agent-Dashboard") ? "active" : ""}
+              onClick={() => setIsMobileMenuOpen(false)}
+              title="Dashboard"
+            >
+              <FaTachometerAlt size={18} />
+              <span>Dashboard</span>
             </Link>
 
-            <Link to="/agent-bookings">
-              Bookings
+            <Link
+              to="/Agent-Bookings"
+              className={isActive("/Agent-Bookings") ? "active" : ""}
+              onClick={() => setIsMobileMenuOpen(false)}
+              title="Bookings"
+            >
+              <FaBook size={18} />
+              <span>Bookings</span>
             </Link>
           </>
         ) : (
-          <>
-            <Link to="/">
-              Home
-            </Link>
-          </>
+          <Link
+            to="/"
+            className={isActive("/") ? "active" : ""}
+            onClick={() => setIsMobileMenuOpen(false)}
+            title="Home"
+          >
+            <FaHome size={18} />
+            <span>Home</span>
+          </Link>
         )}
-
-      </div>
+      </motion.div>
 
       <div className="right-nav">
-
         {token ? (
-          <>
-            <span className="user-name">
-              👤 {username}
-            </span>
-
-            <button
-              onClick={
-                handleLogout
-              }
+          <div className="nav-user-section">
+            <div>
+              <div className="nav-user-name">{username}</div>
+              <div className="nav-user-badge">Guest</div>
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="logout-btn"
+              onClick={handleLogout}
+              title="Logout"
             >
-              Logout
-            </button>
-          </>
+              <FaSignOutAlt size={16} />
+              <span>Logout</span>
+            </motion.button>
+          </div>
         ) : agentToken ? (
-          <>
-            <span className="user-name">
-              🏨 {hotelName}
-            </span>
-
-            <button
-              onClick={
-                handleLogout
-              }
+          <div className="nav-user-section">
+            <div>
+              <div className="nav-user-name">{hotelName}</div>
+              <div className="nav-user-badge">Agent</div>
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="logout-btn"
+              onClick={handleLogout}
+              title="Logout"
             >
-              Logout
-            </button>
-          </>
+              <FaSignOutAlt size={16} />
+              <span>Logout</span>
+            </motion.button>
+          </div>
         ) : (
           <>
-            <Link to="/Login">
-              <button>
-                Login/Signup
-              </button>
-            </Link>
-
-            <Link to="/Agent">
-              <button>
-                Agent Login/Signup
-              </button>
-            </Link>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn btn-secondary"
+              onClick={() => navigate("/Login")}
+              title="Login"
+            >
+              Login
+            </motion.button>
           </>
         )}
-
       </div>
-
-    </div>
+    </nav>
   );
 };
 

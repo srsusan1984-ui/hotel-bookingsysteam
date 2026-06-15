@@ -1,500 +1,385 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import {
-  userLogin,
-  userSignup,
-} from "../assets/services/authService";
-
+import { motion } from "framer-motion";
+import { FaEnvelope, FaLock, FaUser, FaPhone, FaEye, FaEyeSlash } from "react-icons/fa";
+import { userLogin, userSignup } from "../assets/services/authService";
+import { showSuccessToast, showErrorToast } from "../assets/utilities/toastUtils";
 import "./Auth.css";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  const [isLogin, setIsLogin] =
-    useState(true);
+  // Login state
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const [name, setName] =
-    useState("");
+  // Signup state
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [email, setEmail] =
-    useState("");
+  const validateSignup = async (e) => {
+    e.preventDefault();
+    const newErrors = {};
 
-  const [phone, setPhone] =
-    useState("");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 
-  const [password, setPassword] =
-    useState("");
+    if (!name.trim()) newErrors.name = "Name is required";
+    if (!email.trim()) newErrors.email = "Email is required";
+    else if (!emailRegex.test(email)) newErrors.email = "Invalid email address";
+    if (!phone.trim()) newErrors.phone = "Phone is required";
+    else if (phone.length !== 10) newErrors.phone = "Phone must be 10 digits";
+    if (!password) newErrors.password = "Password is required";
+    else if (!passwordRegex.test(password))
+      newErrors.password =
+        "Password must have uppercase, lowercase, number, and symbol (@$!%*?&) (8+ chars)";
+    if (!confirmPassword) newErrors.confirmPassword = "Confirm password is required";
+    else if (password !== confirmPassword) newErrors.confirmPassword = "Passwords don't match";
 
-  const [
-    confirmPassword,
-    setConfirmPassword,
-  ] = useState("");
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
 
-  const [errors, setErrors] =
-    useState({});
+    try {
+      setLoading(true);
+      await userSignup({ name, email, phone, password });
+      showSuccessToast("Signup successful! Please login.");
+      setIsLogin(true);
+      setName("");
+      setEmail("");
+      setPhone("");
+      setPassword("");
+      setConfirmPassword("");
+      setErrors({});
+    } catch (error) {
+      showErrorToast(error.response?.data?.message || "Signup failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const [showPassword, setShowPassword] =
-    useState(false);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const newErrors = {};
 
-  const [
-    showConfirmPassword,
-    setShowConfirmPassword,
-  ] = useState(false);
+    if (!email.trim()) newErrors.email = "Email is required";
+    if (!password.trim()) newErrors.password = "Password is required";
 
-  const validateSignup =
-    async (e) => {
-      e.preventDefault();
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
 
-      const newErrors = {};
+    try {
+      setLoading(true);
+      const response = await userLogin({ email, password });
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      showSuccessToast("Login successful!");
+      navigate("/");
+    } catch (error) {
+      showErrorToast(error.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const emailRegex =
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-      const passwordRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-
-      if (!name.trim()) {
-        newErrors.name =
-          "Name is required";
-      }
-
-      if (!email.trim()) {
-        newErrors.email =
-          "Email is required";
-      } else if (
-        !emailRegex.test(email)
-      ) {
-        newErrors.email =
-          "Invalid Email Address";
-      }
-
-      if (!phone.trim()) {
-        newErrors.phone =
-          "Phone Number is required";
-      } else if (
-        phone.length !== 10
-      ) {
-        newErrors.phone =
-          "Phone Number must be 10 digits";
-      }
-
-      if (!password) {
-        newErrors.password =
-          "Password is required";
-      } else if (
-        !passwordRegex.test(password)
-      ) {
-        newErrors.password =
-          "Password must contain uppercase, lowercase, number and symbol";
-      }
-
-      if (!confirmPassword) {
-        newErrors.confirmPassword =
-          "Confirm Password is required";
-      } else if (
-        password !==
-        confirmPassword
-      ) {
-        newErrors.confirmPassword =
-          "Passwords do not match";
-      }
-
-      setErrors(newErrors);
-
-      if (
-        Object.keys(newErrors)
-          .length > 0
-      ) {
-        return;
-      }
-
-      try {
-        await userSignup({
-          name,
-          email,
-          phone,
-          password,
-        });
-
-        setErrors({
-          success:
-            "Signup Successful. Please Login.",
-        });
-
-        setIsLogin(true);
-
-        setName("");
-        setEmail("");
-        setPhone("");
-        setPassword("");
-        setConfirmPassword("");
-
-      } catch (error) {
-        setErrors({
-          email:
-            error.response?.data
-              ?.message ||
-            "Signup Failed",
-        });
-      }
-    };
-
-  const handleLogin =
-    async (e) => {
-      e.preventDefault();
-
-      const newErrors = {};
-
-      if (!email.trim()) {
-        newErrors.email =
-          "Email is required";
-      }
-
-      if (!password.trim()) {
-        newErrors.password =
-          "Password is required";
-      }
-
-      setErrors(newErrors);
-
-      if (
-        Object.keys(newErrors)
-          .length > 0
-      ) {
-        return;
-      }
-
-      try {
-        const response =
-          await userLogin({
-            email,
-            password,
-          });
-
-        localStorage.setItem(
-          "token",
-          response.data.token
-        );
-
-        localStorage.setItem(
-          "user",
-          JSON.stringify(
-            response.data.user
-          )
-        );
-
-        navigate("/");
-      } catch (error) {
-        setErrors({
-          login:
-            error.response?.data
-              ?.message ||
-            "Login Failed",
-        });
-      }
-    };
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
 
   return (
     <div className="auth-container">
-      <div className="auth-card">
-
+      <motion.div
+        className="auth-card"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {/* Tabs */}
         <div className="auth-tabs">
-          <button
-            className={
-              isLogin
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setIsLogin(true)
-            }
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`tab-btn ${isLogin ? "active" : ""}`}
+            onClick={() => {
+              setIsLogin(true);
+              setErrors({});
+            }}
           >
             Login
-          </button>
+          </motion.button>
 
-          <button
-            className={
-              !isLogin
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setIsLogin(false)
-            }
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`tab-btn ${!isLogin ? "active" : ""}`}
+            onClick={() => {
+              setIsLogin(false);
+              setErrors({});
+            }}
           >
-            Signup
-          </button>
+            Sign Up
+          </motion.button>
         </div>
 
-        {errors.success && (
-          <p className="success-message">
-            {errors.success}
-          </p>
-        )}
-
+        {/* Login Form */}
         {isLogin ? (
-          <form
-            onSubmit={
-              handleLogin
-            }
+          <motion.form
+            key="login"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+            onSubmit={handleLogin}
+            className="auth-form"
           >
-            <h2>User Login</h2>
+            <h2>Welcome Back</h2>
+            <p className="form-subtitle">Sign in to your account</p>
 
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              className={
-                errors.email
-                  ? "error-input"
-                  : ""
-              }
-              onChange={(e) =>
-                setEmail(
-                  e.target.value
-                )
-              }
-            />
-
-            {errors.email && (
-              <p className="error-message">
-                {errors.email}
-              </p>
-            )}
-
-            <div className="password-wrapper">
+            {/* Email */}
+            <div className="form-group">
+              <label className="form-label">
+                <FaEnvelope size={14} />
+                Email Address
+              </label>
               <input
-                type={
-                  showPassword
-                    ? "text"
-                    : "password"
-                }
-                placeholder="Password"
-                value={password}
-                className={
-                  errors.password
-                    ? "error-input"
-                    : ""
-                }
-                onChange={(e) =>
-                  setPassword(
-                    e.target.value
-                  )
-                }
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) setErrors({ ...errors, email: "" });
+                }}
+                className={`form-input ${errors.email ? "error" : ""}`}
               />
-
-              <button
-                type="button"
-                className="show-password-btn"
-                onClick={() =>
-                  setShowPassword(
-                    !showPassword
-                  )
-                }
-              >
-                {showPassword
-                  ? "Hide"
-                  : "Show"}
-              </button>
+              {errors.email && <p className="error-text">{errors.email}</p>}
             </div>
 
-            {errors.password && (
-              <p className="error-message">
-                {errors.password}
-              </p>
-            )}
+            {/* Password */}
+            <div className="form-group">
+              <label className="form-label">
+                <FaLock size={14} />
+                Password
+              </label>
+              <div className="password-group">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errors.password) setErrors({ ...errors, password: "" });
+                  }}
+                  className={`form-input ${errors.password ? "error" : ""}`}
+                />
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                </motion.button>
+              </div>
+              {errors.password && <p className="error-text">{errors.password}</p>}
+            </div>
 
-            {errors.login && (
-              <p className="error-message">
-                {errors.login}
-              </p>
-            )}
-
-            <button
+            {/* Submit */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
-              className="submit-btn"
+              disabled={loading}
+              className="btn btn-primary btn-lg"
+              style={{ marginTop: "24px" }}
             >
-              Login
-            </button>
-          </form>
+              {loading ? "Signing in..." : "Sign In"}
+            </motion.button>
+
+            <p className="form-footer">
+              Don't have an account?{" "}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                type="button"
+                className="link-btn"
+                onClick={() => {
+                  setIsLogin(false);
+                  setErrors({});
+                }}
+              >
+                Create one
+              </motion.button>
+            </p>
+          </motion.form>
         ) : (
-          <form
-            onSubmit={
-              validateSignup
-            }
+          /* Signup Form */
+          <motion.form
+            key="signup"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+            onSubmit={validateSignup}
+            className="auth-form"
           >
-            <h2>User Signup</h2>
+            <h2>Create Account</h2>
+            <p className="form-subtitle">Join us to start booking hotels</p>
 
-            <input
-              type="text"
-              placeholder="Name"
-              value={name}
-              className={
-                errors.name
-                  ? "error-input"
-                  : ""
-              }
-              onChange={(e) =>
-                setName(
-                  e.target.value
-                )
-              }
-            />
-
-            {errors.name && (
-              <p className="error-message">
-                {errors.name}
-              </p>
-            )}
-
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              className={
-                errors.email
-                  ? "error-input"
-                  : ""
-              }
-              onChange={(e) =>
-                setEmail(
-                  e.target.value
-                )
-              }
-            />
-
-            {errors.email && (
-              <p className="error-message">
-                {errors.email}
-              </p>
-            )}
-
-            <input
-              type="tel"
-              maxLength="10"
-              placeholder="Phone Number"
-              value={phone}
-              className={
-                errors.phone
-                  ? "error-input"
-                  : ""
-              }
-              onChange={(e) => {
-                const value =
-                  e.target.value.replace(
-                    /\D/g,
-                    ""
-                  );
-
-                setPhone(value);
-              }}
-            />
-
-            {errors.phone && (
-              <p className="error-message">
-                {errors.phone}
-              </p>
-            )}
-
-            <div className="password-wrapper">
+            {/* Name */}
+            <div className="form-group">
+              <label className="form-label">
+                <FaUser size={14} />
+                Full Name
+              </label>
               <input
-                type={
-                  showPassword
-                    ? "text"
-                    : "password"
-                }
-                placeholder="Password"
-                value={password}
-                className={
-                  errors.password
-                    ? "error-input"
-                    : ""
-                }
-                onChange={(e) =>
-                  setPassword(
-                    e.target.value
-                  )
-                }
+                type="text"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (errors.name) setErrors({ ...errors, name: "" });
+                }}
+                className={`form-input ${errors.name ? "error" : ""}`}
               />
-
-              <button
-                type="button"
-                className="show-password-btn"
-                onClick={() =>
-                  setShowPassword(
-                    !showPassword
-                  )
-                }
-              >
-                {showPassword
-                  ? "Hide"
-                  : "Show"}
-              </button>
+              {errors.name && <p className="error-text">{errors.name}</p>}
             </div>
 
-            {errors.password && (
-              <p className="error-message">
-                {errors.password}
-              </p>
-            )}
-
-            <div className="password-wrapper">
+            {/* Email */}
+            <div className="form-group">
+              <label className="form-label">
+                <FaEnvelope size={14} />
+                Email Address
+              </label>
               <input
-                type={
-                  showConfirmPassword
-                    ? "text"
-                    : "password"
-                }
-                placeholder="Confirm Password"
-                value={
-                  confirmPassword
-                }
-                className={
-                  errors.confirmPassword
-                    ? "error-input"
-                    : ""
-                }
-                onChange={(e) =>
-                  setConfirmPassword(
-                    e.target.value
-                  )
-                }
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) setErrors({ ...errors, email: "" });
+                }}
+                className={`form-input ${errors.email ? "error" : ""}`}
               />
-
-              <button
-                type="button"
-                className="show-password-btn"
-                onClick={() =>
-                  setShowConfirmPassword(
-                    !showConfirmPassword
-                  )
-                }
-              >
-                {showConfirmPassword
-                  ? "Hide"
-                  : "Show"}
-              </button>
+              {errors.email && <p className="error-text">{errors.email}</p>}
             </div>
 
-            {errors.confirmPassword && (
-              <p className="error-message">
-                {
-                  errors.confirmPassword
-                }
-              </p>
-            )}
+            {/* Phone */}
+            <div className="form-group">
+              <label className="form-label">
+                <FaPhone size={14} />
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                maxLength="10"
+                placeholder="9876543210"
+                value={phone}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "");
+                  setPhone(value);
+                  if (errors.phone) setErrors({ ...errors, phone: "" });
+                }}
+                className={`form-input ${errors.phone ? "error" : ""}`}
+              />
+              {errors.phone && <p className="error-text">{errors.phone}</p>}
+            </div>
 
-            <button
+            {/* Password */}
+            <div className="form-group">
+              <label className="form-label">
+                <FaLock size={14} />
+                Password
+              </label>
+              <div className="password-group">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errors.password) setErrors({ ...errors, password: "" });
+                  }}
+                  className={`form-input ${errors.password ? "error" : ""}`}
+                />
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                </motion.button>
+              </div>
+              {errors.password && <p className="error-text">{errors.password}</p>}
+            </div>
+
+            {/* Confirm Password */}
+            <div className="form-group">
+              <label className="form-label">
+                <FaLock size={14} />
+                Confirm Password
+              </label>
+              <div className="password-group">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    if (errors.confirmPassword)
+                      setErrors({ ...errors, confirmPassword: "" });
+                  }}
+                  className={`form-input ${errors.confirmPassword ? "error" : ""}`}
+                />
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                </motion.button>
+              </div>
+              {errors.confirmPassword && (
+                <p className="error-text">{errors.confirmPassword}</p>
+              )}
+            </div>
+
+            {/* Submit */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
-              className="submit-btn"
+              disabled={loading}
+              className="btn btn-primary btn-lg"
+              style={{ marginTop: "24px" }}
             >
-              Signup
-            </button>
-          </form>
-        )}
+              {loading ? "Creating account..." : "Create Account"}
+            </motion.button>
 
-      </div>
+            <p className="form-footer">
+              Already have an account?{" "}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                type="button"
+                className="link-btn"
+                onClick={() => {
+                  setIsLogin(true);
+                  setErrors({});
+                }}
+              >
+                Sign in
+              </motion.button>
+            </p>
+          </motion.form>
+        )}
+      </motion.div>
     </div>
   );
 };

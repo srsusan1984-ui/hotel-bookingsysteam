@@ -1,0 +1,363 @@
+/* ========== AGENT BOOKINGS CONTAINER ========== */
+.agent-bookings-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: calc(100vh - 100px);
+  background: #f8fafc;
+}
+
+/* ========== HEADER ========== */
+.bookings-header {
+  margin-bottom: 32px;
+}
+
+.bookings-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.bookings-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== FILTERS ========== */
+.bookings-filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 250px;
+}
+
+.filter-group svg {
+  color: #6b7280;
+}
+
+.search-input,
+.status-select {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.search-input:focus,
+.status-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.status-select {
+  max-width: 200px;
+}
+
+/* ========== BOOKINGS CONTENT ========== */
+.bookings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ========== DATE SECTION ========== */
+.date-section {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.date-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  color: white;
+}
+
+.date-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  flex: 1;
+}
+
+.booking-count {
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* ========== BOOKINGS LIST ========== */
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+}
+
+/* ========== BOOKING CARD (AGENT) ========== */
+.booking-card-agent {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.booking-card-agent:hover {
+  border-color: #2563eb;
+  background: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+
+/* ========== BOOKING CARD HEADER ========== */
+.booking-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 16px;
+}
+
+.hotel-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.guest-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ========== BOOKING DETAILS GRID ========== */
+.booking-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.detail-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.detail-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.detail-icon-svg {
+  color: #2563eb;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.detail-label {
+  font-size: 11px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.detail-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+/* ========== GUESTS SECTION ========== */
+.guests-section {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 16px 0;
+  border-left: 4px solid #2563eb;
+}
+
+.guests-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 8px 0;
+}
+
+.guests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.guest-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  background: #f3f4f6;
+  border-radius: 6px;
+}
+
+.guest-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.guest-meta {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* ========== BOOKING FOOTER ========== */
+.booking-footer {
+  padding-top: 16px;
+  border-top: 2px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  padding: 8px 12px;
+  background: #eff6ff;
+  color: #0369a1;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .agent-bookings-container {
+    padding: 24px 16px;
+  }
+
+  .bookings-header h1 {
+    font-size: 24px;
+  }
+
+  .bookings-filters {
+    flex-direction: column;
+  }
+
+  .filter-group {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .status-select {
+    max-width: none;
+  }
+
+  .booking-details-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .booking-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .guests-list {
+    gap: 6px;
+  }
+
+  .guest-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .agent-bookings-container {
+    padding: 16px 12px;
+  }
+
+  .bookings-header h1 {
+    font-size: 20px;
+  }
+
+  .date-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .date-header h2 {
+    font-size: 16px;
+  }
+
+  .booking-card-agent {
+    padding: 16px;
+  }
+
+  .hotel-name {
+    font-size: 16px;
+  }
+
+  .booking-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-card-header {
+    gap: 8px;
+  }
+
+  .guest-name {
+    font-size: 13px;
+  }
+
+  .guest-meta {
+    font-size: 11px;
+  }
+
+  .status-info {
+    font-size: 12px;
+  }
+}

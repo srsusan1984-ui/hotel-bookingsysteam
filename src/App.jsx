@@ -12,9 +12,27 @@ import SearchBar from "./pages/SearchBar";
 import BookingDetails from "./pages/BookingDetails";
 import BookingPreview from "./pages/BookingPreview";
 import AgentBookings from "./AgentBookings";
+import { Toaster } from "react-hot-toast";
+
 function App() {
   return (
     <>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        gutter={8}
+        containerClassName=""
+        containerStyle={{}}
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "white",
+            color: "#1f2937",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+            borderRadius: "8px",
+          },
+        }}
+      />
       <Nav />
       <Routes>
         <Route path="/MyBookings" element={<MyBookings />} /> 
