@@ -42,13 +42,33 @@ const SearchResults = () => {
     fetchHotels();
   }, []);
 
-  const filteredHotels = hotels.filter(
-    (hotel) =>
-      hotel.city.toLowerCase().includes(searchLocation.toLowerCase()) &&
-      hotel.totalRooms >= rooms &&
-      (maxPrice === "" || hotel.price <= Number(maxPrice)) &&
-      (minRating === "" || (hotel.rating || 0) >= Number(minRating))
+ const searchTerm = searchLocation.trim().toLowerCase();
+
+const filteredHotels = hotels.filter((hotel) => {
+  const matchesSearch =
+    !searchTerm ||
+    hotel.hotelName?.toLowerCase().includes(searchTerm) ||
+    hotel.city?.toLowerCase().includes(searchTerm) ||
+    hotel.state?.toLowerCase().includes(searchTerm);
+
+  const matchesRooms =
+    hotel.totalRooms >= rooms;
+
+  const matchesPrice =
+    maxPrice === "" ||
+    hotel.price <= Number(maxPrice);
+
+  const matchesRating =
+    minRating === "" ||
+    (hotel.rating || 0) >= Number(minRating);
+
+  return (
+    matchesSearch &&
+    matchesRooms &&
+    matchesPrice &&
+    matchesRating
   );
+});
 
   const toggleFavorite = (hotel) => {
     const newFavorites = favorites.some((fav) => fav._id === hotel._id)

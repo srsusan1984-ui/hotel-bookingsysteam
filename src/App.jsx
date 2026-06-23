@@ -12,8 +12,9 @@ import SearchBar from "./pages/SearchBar";
 import BookingDetails from "./pages/BookingDetails";
 import BookingPreview from "./pages/BookingPreview";
 import AgentBookings from "./AgentBookings";
+import AgentOffers from "./pages/AgentOffers";
 import { Toaster } from "react-hot-toast";
-
+import "./index.css";
 function App() {
   return (
     <>
@@ -46,8 +47,8 @@ function App() {
        <Route path="/hotel/:id" element={<HotelDetails />}/>
        <Route path="/booking-details"element={<BookingDetails/>}/>
        <Route path="/booking-preview"element={ <BookingPreview /> }/>
-  
-
+        <Route path="/agent-offers" element={<AgentOffers />} />
+        
        </Routes>
     </>
   );

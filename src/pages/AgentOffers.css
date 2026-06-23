@@ -1,0 +1,106 @@
+.agent-offers-container {
+  padding: 30px;
+}
+
+.offers-header {
+  margin-bottom: 30px;
+}
+
+.offers-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 25px;
+}
+
+.offer-form-card,
+.offers-list-card {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.offer-form-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.offer-form-card input,
+.offer-form-card textarea,
+.offer-form-card select {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.create-offer-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.offer-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px;
+  margin-bottom: 15px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+}
+
+.offer-code {
+  display: inline-block;
+  margin-top: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.discount-badge {
+  background: #dc2626;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .offers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.offer-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.edit-btn,
+.delete-btn {
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: white;
+}
+
+.edit-btn {
+  background: #2563eb;
+}
+
+.delete-btn {
+  background: #dc2626;
+}

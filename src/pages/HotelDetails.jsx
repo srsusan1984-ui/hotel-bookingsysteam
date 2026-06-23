@@ -13,9 +13,11 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { FaMapMarkerAlt, FaPhone, FaUsers, FaDoorOpen, FaWifi, FaParking, FaUtensils, FaSwimmingPool, FaCalendar } from "react-icons/fa";
+import { FaMapMarkerAlt, FaPhone, FaUsers, FaDoorOpen, FaWifi, FaParking, FaUtensils, FaSwimmingPool, FaCalendar, FaArrowRight } from "react-icons/fa";
 import { showErrorToast, showSuccessToast } from "../assets/utilities/toastUtils";
 import LoadingSpinner from "../components/LoadingSpinner";
+import ReviewForm from "../components/ReviewForm";
+import ReviewList from "../components/ReviewList";
 
 import "./HotelDetails.css";
 
@@ -23,14 +25,23 @@ const HotelDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const pageLocation = useLocation();
-  const searchData = pageLocation.state?.hotel || {};
+  const searchData = pageLocation.state || {};
 
   const [hotel, setHotel] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [dateRange, setDateRange] = useState([null, null]);
+  const [dateRange, setDateRange] = useState([
+  searchData.startDate
+    ? new Date(searchData.startDate)
+    : null,
+  searchData.endDate
+    ? new Date(searchData.endDate)
+    : null,
+]);
   const [startDate, endDate] = dateRange;
   const [adults, setAdults] = useState(searchData.adults || 1);
   const [children, setChildren] = useState(searchData.children || 0);
+  const [availableRooms, setAvailableRooms] = useState(0);
+  const [refreshReviews, setRefreshReviews] = useState(0);
 
   useEffect(() => {
     const fetchHotel = async () => {
@@ -51,18 +62,39 @@ const HotelDetails = () => {
     fetchHotel();
   }, [id]);
 
+  // Calculate room availability based on bookings for selected dates
+  useEffect(() => {
+    const calculateAvailableRooms = async () => {
+      if (!hotel || !startDate || !endDate) {
+        setAvailableRooms(hotel?.totalRooms || 0);
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/hotels/${id}/availability`,
+          {
+            params: {
+              checkInDate: startDate.toISOString().split("T")[0],
+              checkOutDate: endDate.toISOString().split("T")[0],
+            },
+          }
+        );
+        // Backend returns nested structure: data.data.availableRooms
+        const available = response.data.data?.availableRooms || response.data.availableRooms || 0;
+        setAvailableRooms(available);
+      } catch (error) {
+        console.log("Error fetching availability:", error);
+        // Fallback to basic calculation
+        setAvailableRooms(Math.max(0, hotel?.totalRooms - 5) || 0);
+      }
+    };
+
+    calculateAvailableRooms();
+  }, [hotel, startDate, endDate, id]);
+
   const totalGuests = adults + children;
   const rooms = Math.max(1, Math.ceil(totalGuests / 2));
-  
-  // Calculate available rooms based on dates
-  const calculateAvailableRooms = () => {
-    if (!hotel) return hotel?.totalRooms || 0;
-    // For now, show available rooms minus required rooms as a simple calculation
-    const availableRooms = Math.max(0, hotel.totalRooms - rooms);
-    return availableRooms;
-  };
-  
-  const availableRooms = calculateAvailableRooms();
 
   const handleBooking = () => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -80,6 +112,13 @@ const HotelDetails = () => {
 
     if (totalGuests === 0) {
       showErrorToast("Please select at least one guest");
+      return;
+    }
+
+    if (rooms > availableRooms) {
+      showErrorToast(
+        `Only ${availableRooms} room(s) available for the selected dates`
+      );
       return;
     }
 
@@ -135,7 +174,11 @@ const HotelDetails = () => {
           <div className="hero-rating">
             <span>⭐ 4.5/5</span>
             <span>•</span>
-            <span>{availableRooms} Rooms Available</span>
+            <span className={availableRooms > 0 ? "available" : "unavailable"}>
+              {availableRooms > 0
+                ? `${availableRooms}/${hotel.totalRooms} Rooms Available`
+                : "No Rooms Available"}
+            </span>
           </div>
         </motion.div>
       </motion.div>
@@ -174,7 +217,7 @@ const HotelDetails = () => {
                 <FaDoorOpen className="info-icon" />
                 <div>
                   <p className="info-label">Available Rooms</p>
-                  <p className="info-value">{hotel.availableRooms}/{hotel.totalRooms}</p>
+                  <p className="info-value">{availableRooms}/{hotel.totalRooms}</p>
                 </div>
               </div>
 
@@ -317,6 +360,45 @@ const HotelDetails = () => {
               No payment required yet. Secure your booking now!
             </p>
           </div>
+        </motion.div>
+
+            </div> {/* hotel-details-content */}
+
+      {/* Reviews Section */}
+      <div
+        className="reviews-container"
+        style={{
+          marginTop: "60px",
+          paddingBottom: "40px",
+        }}
+      >
+        <ReviewList
+          hotelId={id}
+          key={refreshReviews}
+          onReviewSubmitted={() =>
+            setRefreshReviews((prev) => prev + 1)
+          }
+        />
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          viewport={{ once: true }}
+          style={{ marginTop: "40px" }}
+        >
+          {JSON.parse(localStorage.getItem("user")) && (
+            <ReviewForm
+              hotelId={id}
+              hotelName={hotel?.hotelName}
+              userId={
+                JSON.parse(localStorage.getItem("user"))?._id
+              }
+              onReviewSubmitted={() =>
+                setRefreshReviews((prev) => prev + 1)
+              }
+            />
+          )}
         </motion.div>
       </div>
     </div>

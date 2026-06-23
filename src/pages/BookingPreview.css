@@ -249,6 +249,25 @@
   color: #2563eb;
 }
 
+.price-row.discount {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  padding: 12px 16px;
+  border-radius: 8px;
+  border-left: 4px solid #10b981;
+  margin-top: 12px;
+}
+
+.price-row.discount span {
+  color: #065f46;
+  font-weight: 600;
+}
+
+.price-row.discount .discount-amount {
+  color: #059669;
+  font-weight: 700;
+  font-size: 16px;
+}
+
 /* ========== ACTIONS ========== */
 .preview-actions {
   display: flex;

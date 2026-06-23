@@ -5,6 +5,7 @@ import { FaCheckCircle, FaArrowLeft, FaHotel, FaCalendar, FaUsers, FaDollarSign,
 import { createBooking } from "../assets/services/bookingService";
 import { showSuccessToast, showErrorToast } from "../assets/utilities/toastUtils";
 import LoadingSpinner from "../components/LoadingSpinner";
+import PromoCodeValidator from "../components/PromoCodeValidator";
 
 import "./BookingPreview.css";
 
@@ -12,6 +13,7 @@ const BookingPreview = () => {
   const navigate = useNavigate();
   const pageLocation = useLocation();
   const [loading, setLoading] = useState(false);
+  const [discount, setDiscount] = useState(null);
 
   const {
     hotel,
@@ -42,7 +44,8 @@ const BookingPreview = () => {
         children: 0,
         rooms,
         guests,
-        totalAmount,
+        totalAmount: discount ? discount.finalAmount : totalAmount,
+        discountApplied: discount ? discount.code : null,
       });
 
       showSuccessToast("Booking confirmed successfully! 🎉");
@@ -251,13 +254,34 @@ const BookingPreview = () => {
                 <p>₹0</p>
               </div>
 
+              {discount && (
+                <div className="price-row discount">
+                  <span>Discount Applied ({discount.code})</span>
+                  <p className="discount-amount">-₹{discount.discountAmount.toFixed(2)}</p>
+                </div>
+              )}
+
               <div className="price-divider" />
 
               <div className="price-row total">
                 <span>Total Amount</span>
-                <p>₹{totalAmount}</p>
+                <p>₹{discount ? discount.finalAmount.toFixed(2) : totalAmount}</p>
               </div>
             </div>
+
+            {/* Promo Code Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              style={{ marginTop: '24px' }}
+            >
+              <PromoCodeValidator 
+                bookingAmount={totalAmount}
+                hotelId={hotel?._id}
+                onApplyDiscount={(discountData) => setDiscount(discountData)}
+              />
+            </motion.div>
           </motion.div>
         </motion.div>
 

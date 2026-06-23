@@ -16,6 +16,7 @@ import {
 import SearchBar from "./SearchBar";
 import LoadingSpinner from "../components/LoadingSpinner";
 import EmptyState from "../components/EmptyState";
+import OffersDisplay from "../components/OffersDisplay";
 
 import "../pages/Home.css";
 import { motion } from "framer-motion";
@@ -133,6 +134,8 @@ const Home = () => {
       </div>
 
       <SearchBar />
+
+      
 
       <div className="featured-hotels">
 

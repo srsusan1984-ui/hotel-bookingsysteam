@@ -5,6 +5,7 @@ import { FaPlus, FaEdit, FaTrash, FaHotel, FaDoorOpen, FaCheckCircle, FaEye } fr
 import { getAgentHotels, updateHotel, deleteHotel } from "../assets/services/hotelService";
 import { showSuccessToast, showErrorToast } from "../assets/utilities/toastUtils";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useNavigate } from "react-router-dom";
 
 const AgentDashboard = () => {
   const [hotelName, setHotelName] = useState("");
@@ -37,6 +38,12 @@ const AgentDashboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+  const navigate = useNavigate();
+  const AgentDashboard = () => {
+  const navigate = useNavigate();
+
+  const [hotelName, setHotelName] = useState("");
   };
 
   const resetForm = () => {
@@ -166,6 +173,7 @@ const AgentDashboard = () => {
   };
 
   return (
+    
     <div className="dashboard-container">
       {/* Header */}
       <motion.div
@@ -431,26 +439,37 @@ const AgentDashboard = () => {
                   <p className="hotel-price">₹{hotel.price}/night</p>
 
                   <div className="hotel-card-actions">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="btn btn-secondary btn-sm"
-                      onClick={() => handleEdit(hotel)}
-                    >
-                      <FaEdit size={14} />
-                      Edit
-                    </motion.button>
 
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="btn btn-danger btn-sm"
-                      onClick={() => handleDelete(hotel._id)}
-                    >
-                      <FaTrash size={14} />
-                      Delete
-                    </motion.button>
-                  </div>
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    className="btn btn-primary btn-sm"
+  onClick={() => navigate("/agent-offers")}
+  >
+    Offers
+  </motion.button>
+
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    className="btn btn-secondary btn-sm"
+    onClick={() => handleEdit(hotel)}
+  >
+    <FaEdit size={14} />
+    Edit
+  </motion.button>
+
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    className="btn btn-danger btn-sm"
+    onClick={() => handleDelete(hotel._id)}
+  >
+    <FaTrash size={14} />
+    Delete
+  </motion.button>
+
+</div>
                 </div>
               </motion.div>
             ))}
