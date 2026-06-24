@@ -14,6 +14,7 @@ import BookingPreview from "./pages/BookingPreview";
 import AgentBookings from "./AgentBookings";
 import AgentOffers from "./pages/AgentOffers";
 import { Toaster } from "react-hot-toast";
+import AgentReviews from "./pages/AgentReviews";
 import "./index.css";
 function App() {
   return (
@@ -48,7 +49,7 @@ function App() {
        <Route path="/booking-details"element={<BookingDetails/>}/>
        <Route path="/booking-preview"element={ <BookingPreview /> }/>
         <Route path="/agent-offers" element={<AgentOffers />} />
-        
+        <Route path="/Agent-Reviews" element={<AgentReviews />} />
        </Routes>
     </>
   );

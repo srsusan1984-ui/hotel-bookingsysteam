@@ -6,6 +6,7 @@ import { createBooking } from "../assets/services/bookingService";
 import { showSuccessToast, showErrorToast } from "../assets/utilities/toastUtils";
 import LoadingSpinner from "../components/LoadingSpinner";
 import PromoCodeValidator from "../components/PromoCodeValidator";
+import { createOrder } from "../assets/services/paymentService";
 
 import "./BookingPreview.css";
 
@@ -29,36 +30,102 @@ const BookingPreview = () => {
       ? Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24))
       : 1;
 
-  const handleConfirmBooking = async () => {
-    try {
-      setLoading(true);
-      const user = JSON.parse(localStorage.getItem("user"));
+const handleConfirmBooking = async () => {
+  try {
+    setLoading(true);
 
-      await createBooking({
-        userId: user._id,
-        hotelId: hotel._id,
-        hotelName: hotel.hotelName,
-        checkIn: startDate,
-        checkOut: endDate,
-        adults: guests.length,
-        children: 0,
-        rooms,
-        guests,
-        totalAmount: discount ? discount.finalAmount : totalAmount,
-        discountApplied: discount ? discount.code : null,
-      });
+    const user = JSON.parse(
+      localStorage.getItem("user")
+    );
 
-      showSuccessToast("Booking confirmed successfully! 🎉");
-      navigate("/MyBookings");
-    } catch (error) {
-      console.log(error);
-      showErrorToast(
-        error?.response?.data?.message || "Failed to confirm booking"
+    const amount = discount
+      ? discount.finalAmount
+      : totalAmount;
+
+    // Create Razorpay Order
+    const order = await createOrder(
+      amount
+    );
+
+    const options = {
+      key: "rzp_test_T4uOo3GE1bzl1l", // Your Test Key ID
+
+      amount: order.data.amount,
+
+      currency:
+        order.data.currency,
+
+      order_id:
+        order.data.id,
+
+      name:
+        "Hotel Booking System",
+
+      description:
+        "Hotel Room Booking",
+
+      handler: async function (
+        response
+      ) {
+        try {
+          await createBooking({
+            userId: user._id,
+            hotelId:
+              hotel._id,
+            hotelName:
+              hotel.hotelName,
+            checkIn:
+              startDate,
+            checkOut:
+              endDate,
+            adults:
+              guests.length,
+            children: 0,
+            rooms,
+            guests,
+            totalAmount:
+              amount,
+            paymentId:
+              response.razorpay_payment_id,
+          });
+
+          showSuccessToast(
+            "Payment Successful 🎉"
+          );
+
+          navigate(
+            "/MyBookings"
+          );
+        } catch (error) {
+          console.log(error);
+
+          showErrorToast(
+            "Booking creation failed"
+          );
+        }
+      },
+
+      theme: {
+        color: "#3399cc",
+      },
+    };
+
+    const razorpay =
+      new window.Razorpay(
+        options
       );
-    } finally {
-      setLoading(false);
-    }
-  };
+
+    razorpay.open();
+  } catch (error) {
+    console.log(error);
+
+    showErrorToast(
+      "Payment Failed"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (!hotel || !guests) {
     return <LoadingSpinner />;

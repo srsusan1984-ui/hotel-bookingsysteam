@@ -6,6 +6,7 @@ import { showSuccessToast, showErrorToast } from "../assets/utilities/toastUtils
 import OffersModal from "./OffersModal";
 
 const PromoCodeValidator = ({ bookingAmount, hotelId, onApplyDiscount }) => {
+  
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [appliedOffer, setAppliedOffer] = useState(null);

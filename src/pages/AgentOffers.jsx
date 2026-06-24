@@ -59,15 +59,33 @@ const AgentOffers = () => {
 
       setHotels(hotelResponse.data || []);
 
-      const offerResponse =
-        await getAllOffers();
+     const offerResponse =
+  await getAllOffers();
 
-     setOffers(offerResponse.offers || []);
+const agentHotelIds =
+  hotelResponse.data.map(
+    (hotel) =>
+      hotel._id.toString()
+  );
+
+const filteredOffers =
+  (offerResponse.offers || []).filter(
+    (offer) =>
+      offer.applicableHotels?.some(
+        (hotel) =>
+          agentHotelIds.includes(
+            hotel._id
+              ? hotel._id.toString()
+              : hotel.toString()
+          )
+      )
+  );
+
+setOffers(filteredOffers);
     } catch (error) {
       console.log(error);
     }
   };
-
   const resetForm = () => {
     setFormData({
       title: "",

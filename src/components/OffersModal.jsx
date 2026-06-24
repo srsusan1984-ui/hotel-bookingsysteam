@@ -19,18 +19,29 @@ const OffersModal = ({ isOpen, onClose, onSelectOffer,hotelId,}) => {
     setLoading(true);
     try {
       const response = await getActiveOffers();
+console.log("HOTEL ID:", hotelId);
 
+console.log(
+  "ACTIVE OFFERS:",
+  response.offers
+);
 const filteredOffers =
   (response.offers || []).filter(
     (offer) =>
-      offer.applicableHotels?.length === 0 ||
       offer.applicableHotels?.some(
         (hotel) =>
-          hotel._id === hotelId ||
-          hotel === hotelId
+          (hotel._id
+            ? hotel._id.toString()
+            : hotel.toString()) ===
+          hotelId.toString()
       )
   );
+  console.log("Current Hotel:", hotelId);
 
+console.log(
+  "Filtered Offers:",
+  filteredOffers
+);
 setOffers(filteredOffers);
     } catch (error) {
       console.error("Failed to fetch offers:", error);
