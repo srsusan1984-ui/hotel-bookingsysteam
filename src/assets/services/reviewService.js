@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/reviews";
-
+const API_URL = "https://hotel-bookingsystem-backend.onrender.com/api/reviews";
 // Submit a review
 export const submitReview = async (reviewData) => {
   try {

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/offers";
+const API_URL = "https://hotel-bookingsystem-backend.onrender.com/api/offers";
 
 // Get all active offers
 export const getActiveOffers = async () => {

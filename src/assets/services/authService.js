@@ -1,7 +1,5 @@
 import axios from "axios";
-
-const API =
-  "http://localhost:5000/api/auth";
+const API = "https://hotel-bookingsystem-backend.onrender.com/api/auth";
 
 export const userLogin = (data) =>
   axios.post(

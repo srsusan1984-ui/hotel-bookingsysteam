@@ -1,8 +1,5 @@
 import axios from "axios";
-
-const API =
-  "http://localhost:5000/api/bookings";
-
+const API = "https://hotel-bookingsystem-backend.onrender.com/api/bookings";
 export const createBooking =
   (data) =>
     axios.post(
