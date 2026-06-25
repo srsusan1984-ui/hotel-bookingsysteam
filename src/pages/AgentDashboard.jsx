@@ -98,7 +98,7 @@ const AgentDashboard = () => {
         await updateHotel(editingId, hotelData);
         showSuccessToast("Hotel updated successfully!");
       } else {
-        await fetch("http://localhost:5000/api/hotels", {
+        await fetch("https://hotel-bookingsystem-backend.onrender.com/api/hotels", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(hotelData),

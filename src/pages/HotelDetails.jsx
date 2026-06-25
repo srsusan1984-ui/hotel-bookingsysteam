@@ -48,7 +48,7 @@ const HotelDetails = () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `http://localhost:5000/api/hotels/${id}`
+          `https://hotel-bookingsystem-backend.onrender.com/api/hotels/${id}`
         );
         setHotel(response.data);
       } catch (error) {
@@ -72,7 +72,7 @@ const HotelDetails = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/hotels/${id}/availability`,
+          `https://hotel-bookingsystem-backend.onrender.com/api/hotels/${id}/availability`,
           {
             params: {
               checkInDate: startDate.toISOString().split("T")[0],
