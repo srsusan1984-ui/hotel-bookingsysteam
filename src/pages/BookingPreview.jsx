@@ -64,46 +64,48 @@ const handleConfirmBooking = async () => {
       description:
         "Hotel Room Booking",
 
-      handler: async function (
-        response
-      ) {
-        try {
-          await createBooking({
-            userId: user._id,
-            hotelId:
-              hotel._id,
-            hotelName:
-              hotel.hotelName,
-            checkIn:
-              startDate,
-            checkOut:
-              endDate,
-            adults:
-              guests.length,
-            children: 0,
-            rooms,
-            guests,
-            totalAmount:
-              amount,
-            paymentId:
-              response.razorpay_payment_id,
-          });
+    handler: async function (response) {
+  try {
+    console.log("1. Payment successful");
+console.log("SENDING BOOKING REQUEST");
 
-          showSuccessToast(
-            "Payment Successful 🎉"
-          );
+const bookingResponse =
+  await createBooking({
+    userId: user._id,
+    hotelId: hotel._id,
+    hotelName: hotel.hotelName,
+    checkIn: startDate,
+    checkOut: endDate,
+    adults: guests.length,
+    children: 0,
+    rooms,
+    guests,
+    totalAmount: amount,
+    paymentId: response.razorpay_payment_id,
+  });
 
-          navigate(
-            "/MyBookings"
-          );
-        } catch (error) {
-          console.log(error);
+console.log("Booking Response:", bookingResponse);
+console.log("2. Booking saved");
 
-          showErrorToast(
-            "Booking creation failed"
-          );
-        }
-      },
+showSuccessToast("Payment Successful 🎉");
+
+console.log("3. About to redirect...");
+
+setTimeout(() => {
+  console.log("4. Redirecting now...");
+  navigate("/MyBookings", { replace: true });
+}, 1500);
+
+  } catch (error) {
+  console.log("=========== BOOKING ERROR ===========");
+  console.log(error);
+  console.log("Status:", error.response?.status);
+  console.log("Data:", error.response?.data);
+  console.log("====================================");
+
+  showErrorToast("Booking creation failed");
+}
+},
 
       theme: {
         color: "#3399cc",
