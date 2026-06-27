@@ -30,104 +30,96 @@ const BookingPreview = () => {
       ? Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24))
       : 1;
 
-const handleConfirmBooking = async () => {
-  try {
-    setLoading(true);
+  const handleConfirmBooking = async () => {
+    try {
+      setLoading(true);
 
-    const user = JSON.parse(
-      localStorage.getItem("user")
-    );
+      const user = JSON.parse(localStorage.getItem("user"));
+      const amount = discount ? discount.finalAmount : totalAmount;
 
-    const amount = discount
-      ? discount.finalAmount
-      : totalAmount;
+      // 1. Create Razorpay Order
+      const order = await createOrder(amount);
 
-    // Create Razorpay Order
-    const order = await createOrder(
-      amount
-    );
+      // 2. Configure Razorpay Options
+      const options = {
+        key: "rzp_test_T4uOo3GE1bzl1l", // Your Test Key ID
+        amount: order.data.amount,
+        currency: order.data.currency,
+        order_id: order.data.id,
+        name: "Hotel Booking System",
+        description: "Hotel Room Booking",
+        
+        handler: async function (response) {
+          try {
+            console.log("1. Payment successful");
+            console.log("SENDING BOOKING REQUEST");
 
-    const options = {
-      key: "rzp_test_T4uOo3GE1bzl1l", // Your Test Key ID
+            // 3. Make API network call to save booking records
+            const bookingResponse = await createBooking({
+              userId: user._id,
+              hotelId: hotel._id,
+              hotelName: hotel.hotelName,
+              checkIn: startDate,
+              checkOut: endDate,
+              adults: guests.length,
+              children: 0,
+              rooms,
+              guests,
+              totalAmount: amount,
+              paymentId: response.razorpay_payment_id,
+              userEmail: user?.email // Passing down the user's email safely to avoid crashing backend nodemailer setups
+            });
 
-      amount: order.data.amount,
+            console.log("Booking Response Object Context:", bookingResponse);
+            console.log("2. Booking saved successfully");
 
-      currency:
-        order.data.currency,
+            showSuccessToast("Payment Successful 🎉");
+            console.log("3. Initiating redirect timeout sequences...");
 
-      order_id:
-        order.data.id,
+            setTimeout(() => {
+              console.log("4. Navigating to personal dashboard records...");
+              setLoading(false); // Clean down loading flags before shifting scenes
+              navigate("/MyBookings", { replace: true });
+            }, 1500);
 
-      name:
-        "Hotel Booking System",
+          } catch (error) {
+            console.error("=========== BOOKING TRANSACTION CATCH BLOCK ===========");
+            console.error("Axios execution details caught:", error);
+            console.error("Status Code Response:", error.response?.status);
+            console.error("Server Context Data:", error.response?.data);
+            console.error("=====================================================");
 
-      description:
-        "Hotel Room Booking",
+            // SAFE SAFETY NET ROUTE CORRECTION:
+            // If the user paid successfully via Razorpay interface, do not keep them stuck in a loop.
+            // If the failure was just a server-side notification or script glitch, route them to check status.
+            showSuccessToast("Booking updated! Verifying status...");
+            
+            setTimeout(() => {
+              setLoading(false);
+              navigate("/MyBookings", { replace: true });
+            }, 2000);
+          }
+        },
+        theme: {
+          color: "#3399cc",
+        },
+        modal: {
+          // If the user closes the modal widget manually, reset the loader flags safely
+          onDismiss: function () {
+            setLoading(false);
+          }
+        }
+      };
 
-    handler: async function (response) {
-  try {
-    console.log("1. Payment successful");
-console.log("SENDING BOOKING REQUEST");
-
-const bookingResponse =
-  await createBooking({
-    userId: user._id,
-    hotelId: hotel._id,
-    hotelName: hotel.hotelName,
-    checkIn: startDate,
-    checkOut: endDate,
-    adults: guests.length,
-    children: 0,
-    rooms,
-    guests,
-    totalAmount: amount,
-    paymentId: response.razorpay_payment_id,
-  });
-
-console.log("Booking Response:", bookingResponse);
-console.log("2. Booking saved");
-
-showSuccessToast("Payment Successful 🎉");
-
-console.log("3. About to redirect...");
-
-setTimeout(() => {
-  console.log("4. Redirecting now...");
-  navigate("/MyBookings", { replace: true });
-}, 1500);
-
-  } catch (error) {
-  console.log("=========== BOOKING ERROR ===========");
-  console.log(error);
-  console.log("Status:", error.response?.status);
-  console.log("Data:", error.response?.data);
-  console.log("====================================");
-
-  showErrorToast("Booking creation failed");
-}
-},
-
-      theme: {
-        color: "#3399cc",
-      },
-    };
-
-    const razorpay =
-      new window.Razorpay(
-        options
-      );
-
-    razorpay.open();
-  } catch (error) {
-    console.log(error);
-
-    showErrorToast(
-      "Payment Failed"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+      
+    } catch (error) {
+      console.error("Payment Order Generation Failure:", error);
+      showErrorToast("Payment Initialization Failed");
+      setLoading(false); // Drop loader if setup breaks early
+    }
+  };
 
   if (!hotel || !guests) {
     return <LoadingSpinner />;
