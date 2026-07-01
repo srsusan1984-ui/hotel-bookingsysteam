@@ -11,6 +11,7 @@ import {
   FaBook,
   FaBars,
   FaTimes,
+  FaStar,
 } from "react-icons/fa";
 
 const Nav = () => {
@@ -98,6 +99,17 @@ const Nav = () => {
               <FaBook size={18} />
               <span>Bookings</span>
             </Link>
+
+            {/* NEW REVIEWS BUTTON */}
+            <Link
+              to="/Agent-Reviews"
+              className={isActive("/Agent/reviews") ? "active" : ""}
+              onClick={() => setIsMobileMenuOpen(false)}
+              title="Reviews"
+            >
+              <FaStar size={18} />
+              <span>Reviews</span>
+            </Link>
           </>
         ) : (
           <Link
@@ -119,6 +131,7 @@ const Nav = () => {
               <div className="nav-user-name">{username}</div>
               <div className="nav-user-badge">Guest</div>
             </div>
+
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -136,6 +149,7 @@ const Nav = () => {
               <div className="nav-user-name">{hotelName}</div>
               <div className="nav-user-badge">Agent</div>
             </div>
+
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -148,17 +162,15 @@ const Nav = () => {
             </motion.button>
           </div>
         ) : (
-          <>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="btn btn-secondary"
-              onClick={() => navigate("/Login")}
-              title="Login"
-            >
-              Login
-            </motion.button>
-          </>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="btn btn-secondary"
+            onClick={() => navigate("/Login")}
+            title="Login"
+          >
+            Login
+          </motion.button>
         )}
       </div>
     </nav>
